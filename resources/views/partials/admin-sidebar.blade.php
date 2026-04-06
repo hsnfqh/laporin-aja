@@ -212,17 +212,6 @@
                 </button>
             </div>
             
-            <!-- User Info -->
-            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-2 mb-6 flex items-center justify-center admin-sidebar-expanded:justify-start">
-                <div class="bg-gradient-to-r from-blue-600 to-blue-700 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">
-                    <i class="fas fa-user-shield text-white text-sm"></i>
-                </div>
-                <div class="ml-3 admin-user-details hidden admin-sidebar-expanded:block">
-                    <p class="font-semibold text-gray-800 text-sm truncate">{{ Auth::user()->name }}</p>
-                    <p class="text-xs text-gray-500 truncate">Administrator</p>
-                </div>
-            </div>
-            
             <!-- Navigation Menu -->
             <nav class="space-y-1">
                 <!-- Dashboard -->
