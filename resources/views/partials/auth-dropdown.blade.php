@@ -57,42 +57,32 @@
             </div>
         </div>
         
-        <!-- Menu Items -->
+        <!-- Profile Link -->
+        @if(isset($profileRoute))
         <div class="py-2">
-            <a href="{{ route('dashboard') }}" 
+            <a href="{{ $profileRoute }}" 
                class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition">
-                <i class="fas fa-tachometer-alt w-4 text-gray-400"></i>
-                Dashboard
+                <i class="fas fa-user-circle w-4 text-gray-400"></i>
+                {{ $profileLabel ?? 'Profile' }}
             </a>
-            
-            @if(Auth::user()->role == 'admin')
-                <a href="{{ route('admin.dashboard') }}" 
-                   class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition">
-                    <i class="fas fa-shield-alt w-4 text-gray-400"></i>
-                    Admin Panel
-                </a>
-            @endif
-            
-            @if(isset($profileRoute))
-                <a href="{{ $profileRoute }}" 
-                   class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition">
-                    <i class="fas fa-user-circle w-4 text-gray-400"></i>
-                    {{ $profileLabel ?? 'Profile' }}
-                </a>
-            @endif
-            
-            @if(isset($settingsRoute))
-                <a href="{{ $settingsRoute }}" 
-                   class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition">
-                    <i class="fas fa-cog w-4 text-gray-400"></i>
-                    {{ $settingsLabel ?? 'Pengaturan' }}
-                </a>
-            @endif
         </div>
+        @endif
         
+        <!-- Settings Link -->
+        @if(isset($settingsRoute))
+        <div class="py-2">
+            <a href="{{ $settingsRoute }}" 
+               class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition">
+                <i class="fas fa-cog w-4 text-gray-400"></i>
+                {{ $settingsLabel ?? 'Pengaturan' }}
+            </a>
+        </div>
+        @endif
+        
+        <!-- Divider -->
         <div class="border-t my-1"></div>
         
-        <!-- Logout -->
+        <!-- Logout Section -->
         <div class="py-2">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
