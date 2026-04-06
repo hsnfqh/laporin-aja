@@ -1,6 +1,25 @@
 @extends('layouts.dashboard.index')
 
 @section('dashboard-content')
+<style>
+    @media print {
+        body * {
+            visibility: hidden !important;
+        }
+        #reportDetailSection, #reportDetailSection * {
+            visibility: visible !important;
+        }
+        #reportDetailSection {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+        .no-print {
+            display: none !important;
+        }
+    }
+</style>
 <div class="fade-in max-w-5xl mx-auto">
     <!-- Header -->
     <div class="mb-6">
@@ -31,7 +50,7 @@
     </div>
 
     <!-- Detail Laporan Card -->
-    <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+    <div id="reportDetailSection" class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
         <!-- Status Badge -->
         <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4">
             <div class="flex justify-between items-center">
@@ -175,8 +194,8 @@
             </div>
 
             <!-- Tombol Aksi -->
-            <div class="flex flex-wrap gap-3 pt-4 border-t">
-                <button onclick="window.print()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2">
+            <div class="flex flex-wrap gap-3 pt-4 border-t no-print">
+                <button onclick="printReportSection()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2">
                     <i class="fas fa-download"></i>
                     <span>Unduh Laporan</span>
                 </button>
@@ -210,5 +229,9 @@
             document.getElementById('btnSearch').click();
         }
     });
+
+    function printReportSection() {
+        window.print();
+    }
 </script>
 @endsection

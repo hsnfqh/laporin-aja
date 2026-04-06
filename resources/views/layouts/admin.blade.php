@@ -47,32 +47,37 @@
 </head>
 
 <body class="bg-[#FFFDF5] text-gray-800">
-    <div class="flex min-h-screen">
+    <div class="flex min-h-screen" x-data="{ sidebarOpen: false }">
         <!-- Include Sidebar Admin Partial -->
         @include('partials.admin-sidebar')
 
+        <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false" class="fixed inset-0 bg-black/50 z-30 md:hidden"></div>
+
         <!-- Main Content -->
-        <main class="flex-1 ml-72">
+        <main class="flex-1 md:ml-60">
             <!-- Top Navbar -->
             <div class="bg-white shadow-sm border-b sticky top-0 z-10">
-                <div class="px-8 py-4 flex justify-between items-center">
-                    <div>
-                        <h1 class="text-xl font-bold text-gray-800">@yield('page-title', 'Dashboard Admin')</h1>
-                        <p class="text-sm text-gray-500">@yield('page-description', 'Kelola laporan dan pantau aktivitas masyarakat')</p>
+                <div class="px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <button @click="sidebarOpen = true" class="md:hidden inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <div>
+                            <h1 class="text-lg sm:text-xl font-bold text-gray-800">@yield('page-title', 'Dashboard Admin')</h1>
+                            <p class="text-xs sm:text-sm text-gray-500">@yield('page-description', 'Kelola laporan dan pantau aktivitas masyarakat')</p>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2 sm:gap-4">
                         <!-- Notification Bell -->
                         <div class="relative">
                             <button class="text-gray-400 hover:text-gray-600 transition">
-                                <i class="fas fa-bell text-xl"></i>
+                                <i class="fas fa-bell text-lg sm:text-xl"></i>
                             </button>
-                            <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-white text-[10px] flex items-center justify-center">3</span>
+                            <span class="absolute -top-1 -right-1 w-3 h-3 sm:w-4 sm:h-4 bg-red-500 rounded-full text-white text-[8px] sm:text-[10px] flex items-center justify-center">3</span>
                         </div>
-                        
+
                         @auth
                             @include('partials.auth-dropdown', [
-                                'dashboardRoute' => route('admin.dashboard'),
-                                'dashboardLabel' => 'Dashboard Admin',
                                 'profileRoute' => route('profile.edit'),
                                 'profileLabel' => 'Profile Saya',
                                 'settingsRoute' => '#',
@@ -85,19 +90,19 @@
             </div>
 
             <!-- Page Content -->
-            <div class="p-8">
+            <div class="p-4 sm:p-6 lg:p-8">
                 @if(session('success'))
-                    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 px-4 py-3 rounded mb-6 flex items-center justify-between">
+                    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 px-3 sm:px-4 py-2 sm:py-3 rounded mb-4 sm:mb-6 flex items-center justify-between">
                         <div class="flex items-center gap-2">
                             <i class="fas fa-check-circle"></i>
-                            <span>{{ session('success') }}</span>
+                            <span class="text-sm sm:text-base">{{ session('success') }}</span>
                         </div>
-                        <button onclick="this.parentElement.remove()" class="text-green-700">&times;</button>
+                        <button onclick="this.parentElement.remove()" class="text-green-700 text-lg">&times;</button>
                     </div>
                 @endif
 
                 @if(session('error'))
-                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded mb-6 flex items-center justify-between">
+                    <div class="bg-red-100 border-l-4 border-red-500 text-red-700 px-3 sm:px-4 py-2 sm:py-3 rounded mb-4 sm:mb-6 flex items-center justify-between">
                         <div class="flex items-center gap-2">
                             <i class="fas fa-exclamation-circle"></i>
                             <span>{{ session('error') }}</span>

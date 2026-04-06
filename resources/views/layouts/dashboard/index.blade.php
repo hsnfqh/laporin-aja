@@ -6,16 +6,15 @@
     @include('partials.sidebar')
 
     <!-- Main Content -->
-    <main class="flex-1 ml-72">
+    <main class="flex-1 ml-64">
         <div class="p-8">
             @auth
                 <div class="flex justify-end mb-6">
                     @include('partials.auth-dropdown', [
-                        'dashboardRoute' => route('dashboard'),
-                        'dashboardLabel' => 'Dashboard',
                         'profileRoute' => route('profile.edit'),
                         'profileLabel' => 'Profile',
-                        'settingsRoute' => null,
+                        'settingsRoute' => '#',
+                        'settingsLabel' => 'Pengaturan',
                         'metaText' => 'Pengguna'
                     ])
                 </div>
