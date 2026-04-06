@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <style>
     /* Sidebar Container */
     .sidebar-container {
@@ -7,7 +6,7 @@
         top: 0;
         bottom: 0;
         z-index: 40;
-        transition: all 0.3s ease-in-out;
+        transition: width 0.3s ease-in-out;
     }
     
     /* Sidebar dalam keadaan collapsed (menyempit) */
@@ -37,19 +36,17 @@
         box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
         height: 100%;
         overflow-y: auto;
-        transition: all 0.3s ease-in-out;
+        width: 100%;
     }
     
     /* Sembunyikan teks saat collapsed */
     .sidebar-collapsed .sidebar-text {
         display: none;
-        opacity: 0;
     }
     
     /* Tampilkan teks saat expanded */
     .sidebar-expanded .sidebar-text {
         display: inline;
-        opacity: 1;
     }
     
     /* Atur icon dan teks */
@@ -59,6 +56,7 @@
         display: flex;
         align-items: center;
         gap: 12px;
+        position: relative;
     }
     
     /* Tooltip untuk collapsed mode */
@@ -103,10 +101,6 @@
     }
     
     /* Logo styling */
-    .logo-icon {
-        transition: all 0.3s ease;
-    }
-    
     .sidebar-collapsed .logo-text {
         display: none;
     }
@@ -115,7 +109,7 @@
         display: block;
     }
     
-    /* Tombol pin (optional) */
+    /* Tombol pin */
     .pin-btn {
         position: absolute;
         right: -12px;
@@ -131,7 +125,6 @@
         cursor: pointer;
         z-index: 46;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        transition: all 0.3s ease;
         opacity: 0;
         transition: opacity 0.3s ease;
     }
@@ -143,19 +136,6 @@
     .pin-btn:hover {
         background: #f1f5f9;
         transform: scale(1.1);
-    }
-    
-    /* User info di sidebar */
-    .user-info {
-        transition: all 0.3s ease;
-    }
-    
-    .sidebar-collapsed .user-details {
-        display: none;
-    }
-    
-    .sidebar-expanded .user-details {
-        display: block;
     }
     
     /* Responsive untuk mobile */
@@ -188,59 +168,20 @@
 </style>
 
 <div class="sidebar-container" id="sidebarContainer"
-     @mouseenter="expandSidebar()"
-     @mouseleave="collapseSidebar()">
+     onmouseenter="expandSidebar()"
+     onmouseleave="collapseSidebar()">
     
     <!-- Trigger area (area sensitif di pinggir kiri) -->
     <div class="sidebar-trigger" id="sidebarTrigger"></div>
     
-    <!-- Tombol pin/lock -->
-    <div class="pin-btn" id="pinBtn" onclick="toggleSidebarPin()">
-        <i class="fas fa-thumbtack"></i>
-=======
-<!-- Sidebar -->
-<aside class="w-65 bg-white shadow-lg min-h-screen fixed left-0 top-0 bottom-0 overflow-y-auto">
-    <div class="p-6">
-        <!-- Logo -->
-        <div class="mb-8 text-center">
-            <div class="bg-blue-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg">
-                <i class="fas fa-exclamation-triangle text-white text-3xl"></i>
-            </div>
-            <h2 class="text-xl font-bold text-gray-800">LaporinAja</h2>
-            <p class="text-sm text-gray-500">Platform Pengaduan</p>
-        </div>
-
-        <!-- Navigation -->
-        <nav class="space-y-2">
-            <a href="{{ route('dashboard') }}"
-               class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('dashboard') ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-blue-50' }} transition group">
-                <i class="fas fa-tachometer-alt w-5 {{ request()->routeIs('dashboard') ? 'text-white' : 'text-gray-400' }}"></i>
-                <span>Dashboard</span>
-            </a>
-        <a href="{{ route('laporan.create') }}"
-               class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('laporan.create') ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-blue-50' }} transition group">
-                <i class="fas fa-plus-circle w-5"></i>
-                <span>Laporkan Masalah</span>
-            </a>
-
-            <a href="{{ route('laporan.index') }}"
-               class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('laporan.index') ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-blue-50' }} transition group">
-                <i class="fas fa-eye w-5"></i>
-                <span>Pantau Aduan</span>
-            </a>
-
-            <a href="{{ route('relawan.create') }}"
-               class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('relawan.create') ? 'bg-blue-600 text-white' : 'text-gray-700 hover:bg-blue-50' }} transition group">
-                <i class="fas fa-hands-helping w-5"></i>
-                <span>Gabung Relawan</span>
-            </a>
-        </nav>
->>>>>>> 0ba01b0 (terbaru 5)
-    </div>
-    
     <!-- Sidebar Content -->
     <div class="sidebar-content" id="sidebarContent">
         <div class="p-4">
+            <!-- Tombol pin/lock -->
+            <div class="pin-btn" id="pinBtn" onclick="toggleSidebarPin()">
+                <i class="fas fa-thumbtack"></i>
+            </div>
+            
             <!-- Logo -->
             <div class="mb-8 text-center">
                 <div class="bg-blue-600 w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-2 shadow-lg logo-icon">
@@ -332,23 +273,24 @@
     // Fungsi untuk toggle pin (lock sidebar)
     function toggleSidebarPin() {
         isPinned = !isPinned;
+        const icon = pinBtn.querySelector('i');
         
         if (isPinned) {
             // Locked - sidebar tetap expanded
             sidebarContainer.classList.remove('sidebar-collapsed');
             sidebarContainer.classList.add('sidebar-expanded');
-            pinBtn.innerHTML = '<i class="fas fa-thumbtack"></i>';
             pinBtn.style.backgroundColor = '#3b82f6';
             pinBtn.style.borderColor = '#3b82f6';
-            pinBtn.querySelector('i').style.color = 'white';
+            icon.style.color = 'white';
+            icon.classList.add('fa-rotate-45');
         } else {
             // Unlocked - sidebar bisa auto hide
             sidebarContainer.classList.remove('sidebar-expanded');
             sidebarContainer.classList.add('sidebar-collapsed');
-            pinBtn.innerHTML = '<i class="fas fa-thumbtack"></i>';
             pinBtn.style.backgroundColor = 'white';
             pinBtn.style.borderColor = '#e2e8f0';
-            pinBtn.querySelector('i').style.color = '#64748b';
+            icon.style.color = '#64748b';
+            icon.classList.remove('fa-rotate-45');
         }
     }
     
@@ -399,7 +341,4 @@
             }
         }
     });
-    
-    // Tombol untuk mobile (opsional, bisa ditambahkan di navbar)
-    // Tambahkan button dengan id="mobileMenuBtn" di navbar untuk membuka sidebar di mobile
 </script>

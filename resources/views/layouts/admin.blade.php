@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <meta name="theme-color" content="#3b82f6">
     <meta name="description" content="Admin Panel - LaporinAja">
-    
     <title>Admin Panel - LaporinAja</title>
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -82,7 +80,6 @@
         <!-- Include Sidebar Admin Partial -->
         @include('partials.admin-sidebar')
 
-<<<<<<< HEAD
         <!-- Mobile overlay -->
         <div x-data="{ sidebarOpen: false }">
             <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false" class="fixed inset-0 bg-black/50 z-30 md:hidden"></div>
@@ -125,53 +122,27 @@
                                 </div>
                             </div>
                         </div>
-=======
-        <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false" class="fixed inset-0 bg-black/50 z-30 md:hidden"></div>
 
-        <!-- Main Content -->
-        <main class="flex-1 md:ml-60">
-            <!-- Top Navbar -->
-            <div class="bg-white shadow-sm border-b sticky top-0 z-10">
-                <div class="px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex justify-between items-center">
-                    <div class="flex items-center gap-3">
-                        <button @click="sidebarOpen = true" class="md:hidden inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
-                            <i class="fas fa-bars"></i>
-                        </button>
-                        <div>
-                            <h1 class="text-lg sm:text-xl font-bold text-gray-800">@yield('page-title', 'Dashboard Admin')</h1>
-                            <p class="text-xs sm:text-sm text-gray-500">@yield('page-description', 'Kelola laporan dan pantau aktivitas masyarakat')</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2 sm:gap-4">
-                        <!-- Notification Bell -->
-                        <div class="relative">
-                            <button class="text-gray-400 hover:text-gray-600 transition">
-                                <i class="fas fa-bell text-lg sm:text-xl"></i>
-                            </button>
-                            <span class="absolute -top-1 -right-1 w-3 h-3 sm:w-4 sm:h-4 bg-red-500 rounded-full text-white text-[8px] sm:text-[10px] flex items-center justify-center">3</span>
-                        </div>
->>>>>>> 0ba01b0 (terbaru 5)
-
-                        @auth
-                            @include('partials.auth-dropdown', [
-                                'profileRoute' => route('profile.edit'),
-                                'profileLabel' => 'Profile Saya',
-                                'settingsRoute' => '#',
-                                'settingsLabel' => 'Pengaturan',
-                                'metaText' => 'Administrator'
-                            ])
-                        @endauth
-                    </div>
-                </div>
-                
-                <!-- Mobile page title -->
-                <div class="block md:hidden px-4 pb-3">
-                    <h1 class="text-lg font-bold text-gray-800">@yield('page-title', 'Dashboard Admin')</h1>
-                    <p class="text-xs text-gray-500">@yield('page-description', 'Kelola laporan dan pantau aktivitas masyarakat')</p>
+                    @auth
+                        @include('partials.auth-dropdown', [
+                            'profileRoute' => route('profile.edit'),
+                            'profileLabel' => 'Profile Saya',
+                            'settingsRoute' => '#',
+                            'settingsLabel' => 'Pengaturan',
+                            'metaText' => 'Administrator'
+                        ])
+                    @endauth
                 </div>
             </div>
 
-            <!-- Page Content -->
+            <!-- Mobile page title -->
+            <div class="block md:hidden px-4 pb-3">
+                <h1 class="text-lg font-bold text-gray-800">@yield('page-title', 'Dashboard Admin')</h1>
+                <p class="text-xs text-gray-500">@yield('page-description', 'Kelola laporan dan pantau aktivitas masyarakat')</p>
+            </div>
+        </div>
+
+        <!-- Page Content -->
             <div class="p-4 sm:p-6 lg:p-8">
                 @if(session('success'))
                     <div class="bg-green-100 border-l-4 border-green-500 text-green-700 px-3 sm:px-4 py-2 sm:py-3 rounded mb-4 sm:mb-6 flex items-center justify-between">
@@ -179,11 +150,8 @@
                             <i class="fas fa-check-circle"></i>
                             <span class="text-sm sm:text-base">{{ session('success') }}</span>
                         </div>
-<<<<<<< HEAD
+
                         <button onclick="this.parentElement.remove()" class="text-green-700 hover:text-green-900 text-lg">&times;</button>
-=======
-                        <button onclick="this.parentElement.remove()" class="text-green-700 text-lg">&times;</button>
->>>>>>> 0ba01b0 (terbaru 5)
                     </div>
                 @endif
 

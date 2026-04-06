@@ -4,10 +4,10 @@
 @section('page-description', 'Kelola dan pantau seluruh laporan masyarakat')
 
 @section('admin-content')
-<div class="fade-in">
+<div class="fade-in space-y-6 max-w-[1600px] mx-auto">
     <!-- Filter Section -->
-    <div class="bg-white rounded-xl shadow-md p-6 mb-6">
-        <div class="flex flex-wrap gap-4 items-end">
+    <div class="bg-white rounded-xl shadow-md p-6">
+        <div class="grid gap-4 lg:grid-cols-[1.8fr_auto_auto_auto_auto] items-end">
             <div class="flex-1 min-w-[150px]">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Cari Laporan</label>
                 <div class="relative">
@@ -40,6 +40,14 @@
                 </select>
             </div>
             <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Lampiran</label>
+                <select id="lampiranFilter" class="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500">
+                    <option value="semua">Semua</option>
+                    <option value="ada">Ada Lampiran</option>
+                    <option value="tidak">Tidak Ada Lampiran</option>
+                </select>
+            </div>
+            <div>
                 <button onclick="resetFilters()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition">
                     <i class="fas fa-undo-alt mr-2"></i>Reset
                 </button>
@@ -50,97 +58,217 @@
     <!-- Laporan Table -->
     <div class="bg-white rounded-xl shadow-md overflow-hidden">
         <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead class="bg-gradient-to-r from-gray-50 to-gray-100 border-b">
-                    <tr>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Judul Laporan</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Pelapor</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Kategori</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Lokasi</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Tanggal</th>
-                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200" id="laporanTableBody">
-                    @foreach($laporan as $item)
-                    <tr class="hover:bg-gray-50 transition duration-200 laporan-row" 
-                        data-status="{{ $item->status }}"
-                        data-kategori="{{ $item->kategori }}"
-                        data-judul="{{ strtolower($item->judul_laporan) }}"
-                        data-lokasi="{{ strtolower($item->lokasi) }}"
-                        data-pelapor="{{ strtolower($item->nama_pelapor) }}">
-                        <td class="px-6 py-4 text-sm font-medium text-gray-900">#{{ $item->id }}</td>
-                        <td class="px-6 py-4 text-sm text-gray-800">{{ Str::limit($item->judul_laporan, 50) }}</td>
-                        <td class="px-6 py-4">
-                            <div class="flex items-center gap-2">
-                                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                                    <i class="fas fa-user text-blue-600 text-xs"></i>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-medium text-gray-800">{{ $item->nama_pelapor }}</p>
-                                    <p class="text-xs text-gray-500">{{ $item->email }}</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
-                                {{ $item->kategori }}
-                            </span>
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-600">
-                            <i class="fas fa-map-marker-alt text-gray-400 mr-1"></i>
-                            {{ Str::limit($item->lokasi, 30) }}
-                        </td>
-                        <td class="px-6 py-4">
-                            @if($item->status == 'pending')
-                                <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">
-                                    <i class="fas fa-clock mr-1"></i> Menunggu
-                                </span>
-                            @elseif($item->status == 'diproses')
-                                <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                                    <i class="fas fa-spinner mr-1"></i> Diproses
-                                </span>
-                            @else
-                                <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
-                                    <i class="fas fa-check mr-1"></i> Selesai
-                                </span>
-                            @endif
-                        </td>
-                        <td class="px-6 py-4 text-sm text-gray-500">
-                            <i class="far fa-calendar-alt mr-1"></i>
-                            {{ $item->created_at->format('d/m/Y') }}
-                        </td>
-                        <td class="px-6 py-4 text-center">
-                            <div class="flex items-center justify-center gap-2">
-                                <a href="{{ route('admin.laporan.show', $item->id) }}" 
-                                   class="text-blue-600 hover:text-blue-800 transition" title="Detail">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <button onclick="changeStatus({{ $item->id }}, '{{ $item->status }}')" 
-                                        class="text-green-600 hover:text-green-800 transition" title="Ubah Status">
-                                    <i class="fas fa-tasks"></i>
-                                </button>
-                                <form action="{{ route('admin.laporan.destroy', $item->id) }}" method="POST" class="inline" 
-                                      onsubmit="return confirm('Yakin ingin menghapus laporan ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-800 transition" title="Hapus">
-                                        <i class="fas fa-trash"></i>
+            @if($laporan->count())
+                <table class="min-w-full table-auto">
+                    <thead class="bg-gradient-to-r from-gray-50 to-gray-100 border-b">
+                        <tr>
+                            <th class="px-4 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-16">ID</th>
+                            <th class="px-4 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider w-20">Gambar</th>
+                            <th class="px-4 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Judul Laporan</th>
+                            <th class="px-4 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Pelapor</th>
+                            <th class="px-4 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Kategori</th>
+                            <th class="px-4 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Lokasi</th>
+                            <th class="px-4 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                            <th class="px-4 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Tanggal</th>
+                            <th class="px-4 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider w-28">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200" id="laporanTableBody">
+                        @foreach($laporan as $item)
+                        <tr class="hover:bg-gray-50 transition duration-200 laporan-row" 
+                            data-status="{{ $item->status }}"
+                            data-kategori="{{ $item->kategori }}"
+                            data-judul="{{ strtolower($item->judul_laporan) }}"
+                            data-lokasi="{{ strtolower($item->lokasi) }}"
+                            data-pelapor="{{ strtolower($item->nama_pelapor) }}"
+                            data-lampiran="{{ $item->lampiran ? 'ada' : 'tidak' }}">
+                            
+                            <td class="px-4 py-4 text-sm font-medium text-gray-900">#{{ $item->id }}</td>
+                            
+                            <!-- Kolom Gambar - DIPERBAIKI -->
+                            <td class="px-4 py-4">
+                                @php
+                                    $imageUrl = null;
+                                    $isImage = false;
+                                    $fileExists = false;
+                                    
+                                    if($item->lampiran) {
+                                        // Coba berbagai kemungkinan path
+                                        $possiblePaths = [
+                                            'storage/' . $item->lampiran,
+                                            'storage/lampiran/' . $item->lampiran,
+                                            $item->lampiran
+                                        ];
+                                        
+                                        foreach($possiblePaths as $path) {
+                                            if(file_exists(public_path($path))) {
+                                                $imageUrl = asset($path);
+                                                $fileExists = true;
+                                                break;
+                                            }
+                                        }
+                                        
+                                        // Jika tidak ditemukan, coba langsung dari asset
+                                        if(!$fileExists) {
+                                            $imageUrl = asset('storage/' . $item->lampiran);
+                                        }
+                                        
+                                        // Cek apakah file adalah gambar
+                                        $ext = strtolower(pathinfo($item->lampiran, PATHINFO_EXTENSION));
+                                        $imageExts = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg'];
+                                        $isImage = in_array($ext, $imageExts);
+                                    }
+                                @endphp
+                                
+                                @if($item->lampiran && $fileExists && $isImage)
+                                    <button onclick="showImageModal('{{ $imageUrl }}', '{{ addslashes($item->judul_laporan) }}')" 
+                                            class="group relative block">
+                                        <img src="{{ $imageUrl }}" 
+                                             alt="Lampiran" 
+                                             class="w-12 h-12 rounded-lg object-cover border-2 border-gray-200 group-hover:border-blue-500 transition cursor-pointer"
+                                             onerror="this.src='https://placehold.co/400x400?text=Error+Load'; this.onerror=null;">
+                                        <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 rounded-lg transition flex items-center justify-center">
+                                            <i class="fas fa-search-plus text-white text-xs opacity-0 group-hover:opacity-100 transition"></i>
+                                        </div>
                                     </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                                @elseif($item->lampiran && $fileExists && !$isImage)
+                                    <a href="{{ $imageUrl }}" target="_blank" 
+                                       class="flex flex-col items-center gap-1 text-blue-600 hover:text-blue-800">
+                                        @php
+                                            $ext = strtolower(pathinfo($item->lampiran, PATHINFO_EXTENSION));
+                                            $icon = 'fa-file';
+                                            if($ext == 'pdf') $icon = 'fa-file-pdf';
+                                            elseif(in_array($ext, ['doc', 'docx'])) $icon = 'fa-file-word';
+                                            elseif(in_array($ext, ['xls', 'xlsx'])) $icon = 'fa-file-excel';
+                                            elseif(in_array($ext, ['mp4', 'avi', 'mov'])) $icon = 'fa-file-video';
+                                        @endphp
+                                        <i class="fas {{ $icon }} text-red-500 text-2xl"></i>
+                                        <span class="text-xs">Lihat</span>
+                                    </a>
+                                @elseif($item->lampiran && !$fileExists)
+                                    <div class="w-12 h-12 rounded-lg bg-red-50 flex flex-col items-center justify-center">
+                                        <i class="fas fa-exclamation-triangle text-red-400 text-lg"></i>
+                                        <span class="text-xs text-red-400 mt-1">File Hilang</span>
+                                    </div>
+                                @else
+                                    <div class="w-12 h-12 rounded-lg bg-gray-100 flex flex-col items-center justify-center">
+                                        <i class="fas fa-image text-gray-400 text-lg"></i>
+                                        <span class="text-xs text-gray-400 mt-1">No Image</span>
+                                    </div>
+                                @endif
+                            </td>
+                            
+                            <td class="px-4 py-4">
+                                <div class="max-w-xs">
+                                    <p class="text-sm font-medium text-gray-800">{{ Str::limit($item->judul_laporan, 50) }}</p>
+                                    <p class="text-xs text-gray-400 mt-1">ID: #{{ $item->id }}</p>
+                                </div>
+                            </td>
+                            
+                            <td class="px-4 py-4">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-user text-blue-600 text-xs"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="text-sm font-medium text-gray-800 truncate max-w-[150px]">{{ $item->nama_pelapor }}</p>
+                                        <p class="text-xs text-gray-500 truncate max-w-[150px]">{{ $item->email }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            
+                            <td class="px-4 py-4">
+                                <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full whitespace-nowrap">
+                                    {{ $item->kategori }}
+                                </span>
+                            </td>
+                            
+                            <td class="px-4 py-4 text-sm text-gray-600">
+                                <div class="flex items-center gap-1 min-w-[150px]">
+                                    <i class="fas fa-map-marker-alt text-gray-400 text-xs flex-shrink-0"></i>
+                                    <span class="truncate">{{ Str::limit($item->lokasi, 35) }}</span>
+                                </div>
+                            </td>
+                            
+                            <td class="px-4 py-4">
+                                @if($item->status == 'pending')
+                                    <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full whitespace-nowrap">
+                                        <i class="fas fa-clock mr-1"></i> Menunggu
+                                    </span>
+                                @elseif($item->status == 'diproses')
+                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full whitespace-nowrap">
+                                        <i class="fas fa-spinner mr-1"></i> Diproses
+                                    </span>
+                                @else
+                                    <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full whitespace-nowrap">
+                                        <i class="fas fa-check mr-1"></i> Selesai
+                                    </span>
+                                @endif
+                            </td>
+                            
+                            <td class="px-4 py-4 text-sm text-gray-500 whitespace-nowrap">
+                                <i class="far fa-calendar-alt mr-1"></i>
+                                {{ $item->created_at->format('d/m/Y') }}
+                            </td>
+                            
+                            <td class="px-4 py-4">
+                                <div class="flex items-center justify-center gap-2">
+                                    <a href="{{ route('admin.laporan.show', $item->id) }}" 
+                                       class="text-blue-600 hover:text-blue-800 transition p-1" title="Detail">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <button onclick="changeStatus({{ $item->id }}, '{{ $item->status }}')" 
+                                            class="text-green-600 hover:text-green-800 transition p-1" title="Ubah Status">
+                                        <i class="fas fa-tasks"></i>
+                                    </button>
+                                    <form action="{{ route('admin.laporan.destroy', $item->id) }}" method="POST" class="inline" 
+                                          onsubmit="return confirm('Yakin ingin menghapus laporan ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-red-600 hover:text-red-800 transition p-1" title="Hapus">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            @else
+                <div class="p-6 text-center text-gray-500">
+                    <i class="fas fa-inbox text-4xl text-gray-300 mb-2 block"></i>
+                    Tidak ada laporan untuk ditampilkan.
+                </div>
+            @endif
         </div>
 
         <!-- Pagination -->
         <div class="border-t px-6 py-4 bg-gray-50">
             {{ $laporan->links() }}
+        </div>
+    </div>
+</div>
+
+<!-- Modal Preview Gambar -->
+<div id="imageModal" class="fixed inset-0 bg-black bg-opacity-80 z-50 hidden items-center justify-center p-4" onclick="closeImageModal()">
+    <div class="relative max-w-4xl max-h-[90vh] bg-white rounded-xl overflow-hidden" onclick="event.stopPropagation()">
+        <div class="flex justify-between items-center px-4 py-3 bg-gray-100 border-b">
+            <h3 class="font-semibold text-gray-800 truncate" id="modalTitle">Preview Gambar</h3>
+            <button onclick="closeImageModal()" class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        <div class="p-4 flex justify-center items-center bg-gray-900 min-h-[300px]">
+            <img id="modalImage" src="" alt="Preview" class="max-w-full max-h-[70vh] object-contain">
+        </div>
+        <div class="px-4 py-3 bg-gray-100 border-t flex justify-end gap-2">
+            <a id="downloadLink" href="#" download class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition text-sm">
+                <i class="fas fa-download mr-2"></i>Download
+            </a>
+            <button onclick="closeImageModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded-lg transition text-sm">
+                <i class="fas fa-times mr-2"></i>Tutup
+            </button>
         </div>
     </div>
 </div>
@@ -160,9 +288,9 @@
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Pilih Status</label>
                 <select name="status" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500">
-                    <option value="pending">Menunggu</option>
-                    <option value="diproses">Diproses</option>
-                    <option value="selesai">Selesai</option>
+                    <option value="pending">📋 Menunggu</option>
+                    <option value="diproses">⚙️ Diproses</option>
+                    <option value="selesai">✅ Selesai</option>
                 </select>
             </div>
             <div class="flex gap-3">
@@ -178,11 +306,35 @@
 </div>
 
 <script>
+    // Image Modal functions
+    function showImageModal(imageUrl, title) {
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const modalTitle = document.getElementById('modalTitle');
+        const downloadLink = document.getElementById('downloadLink');
+        
+        modalImage.src = imageUrl;
+        modalTitle.textContent = title || 'Preview Gambar';
+        downloadLink.href = imageUrl;
+        
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeImageModal() {
+        const modal = document.getElementById('imageModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        document.body.style.overflow = '';
+    }
+    
     // Filter functions
     function filterTable() {
         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
         const statusFilter = document.getElementById('statusFilter').value;
         const kategoriFilter = document.getElementById('kategoriFilter').value;
+        const lampiranFilter = document.getElementById('lampiranFilter').value;
         
         const rows = document.querySelectorAll('.laporan-row');
         
@@ -192,11 +344,13 @@
             const judul = row.dataset.judul;
             const lokasi = row.dataset.lokasi;
             const pelapor = row.dataset.pelapor;
+            const lampiran = row.dataset.lampiran;
             
             let show = true;
             
             if (statusFilter !== 'semua' && status !== statusFilter) show = false;
             if (kategoriFilter !== 'semua' && kategori !== kategoriFilter) show = false;
+            if (lampiranFilter !== 'semua' && lampiran !== lampiranFilter) show = false;
             if (searchTerm && !judul.includes(searchTerm) && !lokasi.includes(searchTerm) && !pelapor.includes(searchTerm)) show = false;
             
             row.style.display = show ? '' : 'none';
@@ -207,6 +361,7 @@
         document.getElementById('searchInput').value = '';
         document.getElementById('statusFilter').value = 'semua';
         document.getElementById('kategoriFilter').value = 'semua';
+        document.getElementById('lampiranFilter').value = 'semua';
         filterTable();
     }
     
@@ -235,10 +390,40 @@
     document.getElementById('searchInput').addEventListener('keyup', filterTable);
     document.getElementById('statusFilter').addEventListener('change', filterTable);
     document.getElementById('kategoriFilter').addEventListener('change', filterTable);
+    document.getElementById('lampiranFilter').addEventListener('change', filterTable);
     
     // Close modal when clicking outside
     document.getElementById('statusModal').addEventListener('click', function(e) {
         if (e.target === this) closeModal();
     });
+    
+    // Escape key to close modals
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeImageModal();
+            closeModal();
+        }
+    });
 </script>
+
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    
+    #imageModal .bg-white {
+        animation: fadeIn 0.2s ease-out;
+    }
+    
+    .group:hover .group-hover\:bg-opacity-30 {
+        --tw-bg-opacity: 0.3;
+    }
+    
+    @media (max-width: 768px) {
+        .table-auto {
+            min-width: 1000px;
+        }
+    }
+</style>
 @endsection

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <style>
     /* Sidebar Admin Container */
     .admin-sidebar-container {
@@ -204,18 +203,6 @@
                 </div>
                 <h2 class="text-lg font-bold text-gray-800 admin-logo-text">Admin Panel</h2>
                 <p class="text-xs text-gray-500 admin-logo-text">LaporinAja</p>
-=======
-<!-- Sidebar Admin -->
-<aside class="w-60 bg-white shadow-lg min-h-screen fixed left-0 top-0 bottom-0 overflow-y-auto z-40 
-    transition-transform duration-300 md:translate-x-0"
-    :class="{ '-translate-x-full': !sidebarOpen, 'md:translate-x-0': true }"
-    @click.away="sidebarOpen = false">
-    <div class="p-6">
-        <!-- Logo -->
-        <div class="mb-8 text-center">
-            <div class="bg-gradient-to-r from-blue-600 to-blue-700 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg">
-                <i class="fas fa-shield-alt text-white text-3xl"></i>
->>>>>>> 0ba01b0 (terbaru 5)
             </div>
             
             <!-- Mobile close button -->

@@ -5,60 +5,34 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Laporan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class LaporanController extends Controller
 {
-
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
-        $laporan = Laporan::with('user')
-            ->latest()
-            ->paginate(15);
-
-        $totalLaporan = Laporan::count();
-        $pendingCount = Laporan::where('status', 'pending')->count();
-        $diprosesCount = Laporan::where('status', 'diproses')->count();
-        $selesaiCount = Laporan::where('status', 'selesai')->count();
-
-        return view('admin.laporan.index', compact(
-            'laporan',
-            'totalLaporan',
-            'pendingCount',
-            'diprosesCount',
-            'selesaiCount'
-        ));
+        // HAPUS yang menggunakan with('user') jika tidak ada relasi
+        $laporan = Laporan::orderBy('created_at', 'desc')->paginate(15);
+        
+        return view('admin.laporan.index', compact('laporan'));
     }
 
-    public function create()
-    {
-        return redirect()->route('admin.dashboard');
-    }
-
-    public function store(Request $request)
-    {
-        return redirect()->route('admin.dashboard');
-    }
-
+    /**
+     * Display the specified resource.
+     */
     public function show($id)
     {
-        return redirect()->route('admin.dashboard');
+        $laporan = Laporan::findOrFail($id);
+        
+        return view('admin.laporan.show', compact('laporan'));
     }
 
-    public function edit($id)
-    {
-        return redirect()->route('admin.dashboard');
-    }
-
-    public function update(Request $request, $id)
-    {
-        return redirect()->route('admin.dashboard');
-    }
-
-    public function destroy($id)
-    {
-        return redirect()->route('admin.dashboard');
-    }
-
+    /**
+     * Update status laporan.
+     */
     public function updateStatus(Request $request, $id)
     {
         $request->validate([
@@ -66,8 +40,27 @@ class LaporanController extends Controller
         ]);
 
         $laporan = Laporan::findOrFail($id);
-        $laporan->update(['status' => $request->status]);
+        $laporan->status = $request->status;
+        $laporan->save();
 
-        return redirect()->back()->with('success', 'Status laporan berhasil diubah');
+        return redirect()->back()->with('success', 'Status laporan berhasil diupdate');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
+    {
+        $laporan = Laporan::findOrFail($id);
+        
+        // Hapus file lampiran jika ada
+        if ($laporan->lampiran && Storage::disk('public')->exists($laporan->lampiran)) {
+            Storage::disk('public')->delete($laporan->lampiran);
+        }
+        
+        $laporan->delete();
+
+        return redirect()->route('admin.laporan.index')
+            ->with('success', 'Laporan berhasil dihapus');
     }
 }

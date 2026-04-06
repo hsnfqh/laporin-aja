@@ -61,7 +61,7 @@
 
             <div class="mb-4">
                 <label class="block text-gray-700 mb-2">Tanggal Kejadian <span class="text-red-500">*</span></label>
-                <input type="date" name="tanggal_kejadian" value="{{ old('tanggal_kejadian', $laporan->tanggal_kejadian->format('Y-m-d')) }}" 
+                <input type="date" name="tanggal_kejadian" value="{{ old('tanggal_kejadian', $laporan->tanggal_kejadian instanceof \Carbon\Carbon ? $laporan->tanggal_kejadian->format('Y-m-d') : date('Y-m-d', strtotime($laporan->tanggal_kejadian))) }}" 
                        class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500" required>
                 @error('tanggal_kejadian') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
             </div>
@@ -84,21 +84,80 @@
 
             <div class="mb-4">
                 <label class="block text-gray-700 mb-2">Lampiran Bukti (Foto/Video/Dokumen)</label>
+                
+                {{-- Tampilkan lampiran yang ada --}}
                 @if($laporan->lampiran)
-                    <div class="mb-2 p-2 bg-gray-100 rounded">
-                        <p class="text-sm text-gray-600">Lampiran saat ini:</p>
-                        @if($laporan->is_lampiran_image)
-                            <img src="{{ $laporan->lampiran_url }}" class="h-20 w-auto mt-1">
-                        @else
-                            <a href="{{ $laporan->lampiran_url }}" target="_blank" class="text-blue-600 text-sm">Lihat Lampiran</a>
-                        @endif
+                    <div class="mb-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <p class="text-sm text-gray-600 mb-2">Lampiran saat ini:</p>
+                        <div class="flex items-center gap-3">
+                            {{-- Cek apakah file adalah gambar --}}
+                            @php
+                                $lampiranPath = $laporan->lampiran;
+                                $isImage = false;
+                                $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'];
+                                $fileExtension = strtolower(pathinfo($lampiranPath, PATHINFO_EXTENSION));
+                                
+                                if(in_array($fileExtension, $imageExtensions)) {
+                                    $isImage = true;
+                                }
+                                
+                                // Cek juga dari helper method jika ada
+                                if(method_exists($laporan, 'is_lampiran_image')) {
+                                    $isImage = $isImage || $laporan->is_lampiran_image;
+                                }
+                            @endphp
+                            
+                            @if($isImage)
+                                <img src="{{ asset('storage/' . $lampiranPath) }}" 
+                                     alt="Lampiran Saat Ini" 
+                                     class="h-20 w-auto object-cover rounded border">
+                            @else
+                                @php
+                                    $fileIcon = 'fa-file';
+                                    if(in_array($fileExtension, ['pdf'])) $fileIcon = 'fa-file-pdf';
+                                    elseif(in_array($fileExtension, ['doc', 'docx'])) $fileIcon = 'fa-file-word';
+                                    elseif(in_array($fileExtension, ['xls', 'xlsx'])) $fileIcon = 'fa-file-excel';
+                                    elseif(in_array($fileExtension, ['mp4', 'avi', 'mov', 'mkv'])) $fileIcon = 'fa-file-video';
+                                    elseif(in_array($fileExtension, ['mp3', 'wav'])) $fileIcon = 'fa-file-audio';
+                                @endphp
+                                <i class="fas {{ $fileIcon }} text-3xl text-gray-500"></i>
+                            @endif
+                            
+                            <div class="flex-1">
+                                <p class="text-sm text-gray-700 break-all">
+                                    <i class="fas fa-paperclip mr-1 text-gray-400"></i>
+                                    {{ basename($lampiranPath) }}
+                                </p>
+                                <a href="{{ asset('storage/' . $lampiranPath) }}" 
+                                   target="_blank" 
+                                   class="text-blue-600 text-sm hover:underline inline-flex items-center gap-1 mt-1">
+                                    <i class="fas fa-external-link-alt"></i> Lihat Lampiran
+                                </a>
+                            </div>
+                            
+                            {{-- Checkbox untuk menghapus lampiran --}}
+                            <label class="flex items-center gap-2 text-sm text-red-600 cursor-pointer">
+                                <input type="checkbox" name="hapus_lampiran" value="1" class="rounded border-gray-300">
+                                <i class="fas fa-trash-alt"></i> Hapus
+                            </label>
+                        </div>
                     </div>
                 @endif
+                
+                {{-- Input upload file baru --}}
                 <input type="file" name="lampiran" 
                        accept="image/*,video/*,.pdf,.doc,.docx"
-                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500">
-                <p class="text-gray-500 text-sm mt-1">Kosongkan jika tidak ingin mengubah lampiran. Max 5MB (JPG, PNG, PDF, DOC)</p>
-                @error('lampiran') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                       class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                
+                <div class="text-gray-500 text-sm mt-2 flex flex-wrap gap-3">
+                    <span><i class="fas fa-info-circle mr-1"></i> Kosongkan jika tidak ingin mengubah lampiran</span>
+                    <span><i class="fas fa-image mr-1"></i> Format: JPG, PNG, GIF, PDF, DOC</span>
+                    <span><i class="fas fa-database mr-1"></i> Max: 5MB</span>
+                </div>
+                
+                @error('lampiran') 
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p> 
+                @enderror
             </div>
         </div>
 
@@ -112,4 +171,52 @@
         </div>
     </form>
 </div>
+
+<style>
+    /* Preview gambar saat memilih file baru */
+    .image-preview {
+        display: none;
+        margin-top: 10px;
+    }
+    
+    .image-preview img {
+        max-height: 150px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+    }
+</style>
+
+<script>
+    // Preview gambar sebelum upload
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.querySelector('input[name="lampiran"]');
+        
+        if (fileInput) {
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    // Hapus preview lama jika ada
+                    let preview = document.querySelector('.image-preview');
+                    if (!preview) {
+                        preview = document.createElement('div');
+                        preview.className = 'image-preview mt-3';
+                        fileInput.parentNode.appendChild(preview);
+                    }
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        preview.innerHTML = `
+                            <p class="text-sm text-gray-600 mb-2">Preview gambar baru:</p>
+                            <img src="${event.target.result}" class="h-32 w-auto rounded border">
+                        `;
+                        preview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                } else if (fileInput.parentNode.querySelector('.image-preview')) {
+                    fileInput.parentNode.querySelector('.image-preview').style.display = 'none';
+                }
+            });
+        }
+    });
+</script>
 @endsection

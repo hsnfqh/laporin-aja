@@ -58,21 +58,9 @@
         </div>
         
         <!-- Menu Items -->
-        <div class="py-2">
-            <a href="{{ route('dashboard') }}" 
-               class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition">
-                <i class="fas fa-tachometer-alt w-4 text-gray-400"></i>
-                Dashboard
-            </a>
             
-            @if(Auth::user()->role == 'admin')
-                <a href="{{ route('admin.dashboard') }}" 
-                   class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition">
-                    <i class="fas fa-shield-alt w-4 text-gray-400"></i>
-                    Admin Panel
-                </a>
-            @endif
-            
+          <div class="px-4 py-2">
+
             @if(isset($profileRoute))
                 <a href="{{ $profileRoute }}" 
                    class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition">
@@ -88,12 +76,7 @@
                     {{ $settingsLabel ?? 'Pengaturan' }}
                 </a>
             @endif
-        </div>
-        
-        <div class="border-t my-1"></div>
-        
-        <!-- Logout -->
-        <div class="py-2">
+              <div class="py-2">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" 
@@ -101,6 +84,8 @@
                     <i class="fas fa-sign-out-alt w-4"></i>
                     Logout
                 </button>
+        </div>
+       
             </form>
         </div>
     </div>
