@@ -47,7 +47,7 @@
 </head>
 
 <body class="bg-[#FFFDF5] text-gray-800">
-    <div class="flex min-h-screen" x-data="{ sidebarOpen: false }">
+    <div class="flex min-h-screen">
         <!-- Include Sidebar Admin Partial -->
         @include('partials.admin-sidebar')
 

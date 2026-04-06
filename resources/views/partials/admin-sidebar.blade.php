@@ -1,8 +1,5 @@
 <!-- Sidebar Admin -->
-<aside class="w-60 bg-white shadow-lg min-h-screen fixed left-0 top-0 bottom-0 overflow-y-auto z-40 
-    transition-transform duration-300 md:translate-x-0"
-    :class="{ '-translate-x-full': !sidebarOpen, 'md:translate-x-0': true }"
-    @click.away="sidebarOpen = false">
+<aside class="w-60 bg-white shadow-lg min-h-screen fixed left-0 top-0 bottom-0 overflow-y-auto z-30">
     <div class="p-6">
         <!-- Logo -->
         <div class="mb-8 text-center">
