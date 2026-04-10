@@ -24,11 +24,13 @@
             </a></li>
         </ul>
             
-            <!-- TOMBOL PORTAL ADMIN - STYLE SOLID (seperti "Buat Laporan") -->
-            <a href="{{ route('login') }}" class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium rounded-full hover:from-blue-700 hover:to-blue-800 transition duration-300 shadow-md hover:shadow-lg flex items-center gap-2">
-                <i class="fas fa-user-shield text-sm"></i>
-                Portal Admin
-            </a>
+            <!-- TOMBOL PORTAL ADMIN - Hanya untuk user yang belum login -->
+            @guest
+                <a href="{{ route('login') }}" class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium rounded-full hover:from-blue-700 hover:to-blue-800 transition duration-300 shadow-md hover:shadow-lg flex items-center gap-2">
+                    <i class="fas fa-user-shield text-sm"></i>
+                    Portal Admin
+                </a>
+            @endguest
 
             <!-- USER MENU FOR AUTHENTICATED USERS -->
             @auth
@@ -68,11 +70,13 @@
             </a>
         @endif
         
-        <!-- Portal Admin di Mobile - SOLID -->
-        <a href="{{ route('login') }}" class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium rounded-full w-3/4 text-center flex items-center justify-center gap-2 hover:from-blue-700 hover:to-blue-800 transition duration-300">
-            <i class="fas fa-user-shield"></i>
-            Portal Admin
-        </a>
+        <!-- Portal Admin di Mobile - Hanya untuk user yang belum login -->
+        @guest
+            <a href="{{ route('login') }}" class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-medium rounded-full w-3/4 text-center flex items-center justify-center gap-2 hover:from-blue-700 hover:to-blue-800 transition duration-300">
+                <i class="fas fa-user-shield"></i>
+                Portal Admin
+            </a>
+        @endguest
 
         <!-- USER MENU FOR AUTHENTICATED USERS - MOBILE -->
         @auth
