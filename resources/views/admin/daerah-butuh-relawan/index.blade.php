@@ -129,12 +129,11 @@
                         <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Prioritas</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Relawan</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Status</th>
-                        <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
                     @forelse($daerahList as $daerah)
-                    <tr class="hover:bg-gray-50 transition">
+                    <tr onclick="window.location='{{ route('admin.daerah-butuh-relawan.show', $daerah->id) }}'" class="hover:bg-gray-50 transition cursor-pointer">
                         <td class="px-4 py-3">
                             <div>
                                 <p class="font-medium text-gray-800">{{ $daerah->nama_daerah }}</p>
@@ -167,37 +166,10 @@
                                 </span>
                             @endif
                         </td>
-                        <td class="px-4 py-3 text-center">
-                            <div class="flex items-center justify-center gap-2">
-                                <a href="{{ route('admin.daerah-butuh-relawan.show', $daerah->id) }}"
-                                    class="text-blue-600 hover:text-blue-800 transition" title="Detail">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{{ route('admin.daerah-butuh-relawan.edit', $daerah->id) }}"
-                                    class="text-green-600 hover:text-green-800 transition" title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <form action="{{ route('admin.daerah-butuh-relawan.toggle', $daerah->id) }}" method="POST" class="inline">
-                                    @csrf
-                                    @method('PUT')
-                                    <button type="submit" class="{{ $daerah->aktif ? 'text-yellow-600 hover:text-yellow-800' : 'text-green-600 hover:text-green-800' }} transition" title="{{ $daerah->aktif ? 'Nonaktifkan' : 'Aktifkan' }}">
-                                        <i class="fas fa-{{ $daerah->aktif ? 'ban' : 'check' }}"></i>
-                                    </button>
-                                </form>
-                                <form action="{{ route('admin.daerah-butuh-relawan.destroy', $daerah->id) }}" method="POST" class="inline"
-                                      onsubmit="return confirm('Yakin ingin menghapus daerah ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-800 transition" title="Hapus">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+                        <td colspan="5" class="px-4 py-8 text-center text-gray-500">
                             <i class="fas fa-map-marked-alt text-4xl text-gray-300 mb-2 block"></i>
                             Belum ada data daerah
                         </td>

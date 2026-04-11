@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Relawan;
 
 class DaerahButuhRelawan extends Model
 {
@@ -54,6 +55,16 @@ class DaerahButuhRelawan extends Model
     public function getRelawanTersediaAttribute()
     {
         return max(0, $this->relawan_dibutuhkan - $this->relawan_terdaftar);
+    }
+
+    public function relawans()
+    {
+        return $this->hasMany(Relawan::class, 'daerah_butuh_relawan_id');
+    }
+
+    public function getPrioritasBadgeClassAttribute()
+    {
+        return $this->getPrioritasBadgeAttribute();
     }
 
     public function scopeAktif($query)

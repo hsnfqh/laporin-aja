@@ -189,14 +189,13 @@
                         <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Daerah</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Status</th>
                         <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Tanggal Daftar</th>
-                        <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
                     @forelse($relawans as $relawan)
-                    <tr class="hover:bg-gray-50 transition">
+                    <tr onclick="showDetail({{ $relawan->id }})" class="hover:bg-gray-50 transition cursor-pointer">
                         <td class="px-4 py-3">
-                            <input type="checkbox" class="rowCheckbox rounded border-gray-300" value="{{ $relawan->id }}">
+                            <input type="checkbox" onclick="event.stopPropagation()" class="rowCheckbox rounded border-gray-300" value="{{ $relawan->id }}">
                         </td>
                         <td class="px-4 py-3 text-sm text-gray-900">#{{ $relawan->id }}</td>
                         <td class="px-4 py-3">
@@ -247,26 +246,6 @@
                         </td>
                         <td class="px-4 py-3 text-sm text-gray-500">
                             {{ $relawan->created_at->format('d/m/Y') }}
-                        </td>
-                        <td class="px-4 py-3 text-center">
-                            <div class="flex items-center justify-center gap-2">
-                                <button onclick="showDetail({{ $relawan->id }})" 
-                                        class="text-blue-600 hover:text-blue-800 transition" title="Detail">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button onclick="changeStatus({{ $relawan->id }}, '{{ $relawan->status }}')" 
-                                        class="text-green-600 hover:text-green-800 transition" title="Ubah Status">
-                                    <i class="fas fa-tasks"></i>
-                                </button>
-                                <form action="{{ route('admin.relawan.destroy', $relawan->id) }}" method="POST" class="inline"
-                                      onsubmit="return confirm('Yakin ingin menghapus relawan ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-600 hover:text-red-800 transition" title="Hapus">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-                            </div>
                         </td>
                     </tr>
                     @empty
