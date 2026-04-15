@@ -13,9 +13,11 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             UserRoleSeeder::class,
+            RolePermissionSeeder::class,
+            DaerahButuhRelawanSeeder::class,
+            RelawanSeeder::class,
+            LaporanSeeder::class,
+            TanggapanSeeder::class,
         ]);
-
-        // Seed daerah yang membutuhkan relawan
-        $this->call(DaerahButuhRelawanSeeder::class);
     }
 }

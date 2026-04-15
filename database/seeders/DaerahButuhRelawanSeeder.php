@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\DaerahButuhRelawan;
+use Illuminate\Database\Seeder;
 
 class DaerahButuhRelawanSeeder extends Seeder
 {
@@ -89,7 +88,13 @@ class DaerahButuhRelawanSeeder extends Seeder
         ];
 
         foreach ($daerahData as $daerah) {
-            DaerahButuhRelawan::create($daerah);
+            DaerahButuhRelawan::updateOrCreate(
+                [
+                    'nama_daerah' => $daerah['nama_daerah'],
+                    'provinsi' => $daerah['provinsi'],
+                ],
+                $daerah
+            );
         }
     }
 }
