@@ -2,7 +2,8 @@
 <div class="relative" x-data="{ open: false }">
     <button @click="open = !open" 
             @click.away="open = false"
-            class="flex items-center gap-3 focus:outline-none group">
+            class="flex items-center gap-3 focus:outline-none group px-2 py-1 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+        
         <!-- User Info Text -->
         <div class="text-right hidden sm:block">
             <p class="text-sm font-semibold text-gray-700">{{ Auth::user()->name }}</p>
@@ -16,18 +17,30 @@
                 @endif
             </p>
         </div>
-        
-        <!-- Avatar -->
-        <div class="relative">
-            <div class="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center text-white font-bold shadow-md group-hover:shadow-lg transition">
-                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-            </div>
+
+        <!-- Avatar - Positioned Right -->
+        <div class="relative flex-shrink-0">
+            @if(Auth::user()->avatar ?? false)
+                <!-- Avatar Image -->
+                <img src="{{ asset('storage/' . Auth::user()->avatar) }}" 
+                     alt="{{ Auth::user()->name }}" 
+                     class="w-10 h-10 rounded-full object-cover border-2 border-blue-200 shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:scale-105">
+            @else
+                <!-- Avatar Initials -->
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-bold shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:scale-105 group-hover:rotate-3">
+                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                </div>
+            @endif
+            
             <!-- Status Online Indicator -->
-            <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+            <div class="absolute -bottom-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full border-2 border-white shadow-sm animate-pulse"></div>
+            
+            <!-- Hover Effect Ring -->
+            <div class="absolute inset-0 rounded-full border-2 border-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 scale-110"></div>
         </div>
-        
+
         <!-- Chevron Icon -->
-        <i class="fas fa-chevron-down text-gray-400 text-xs transition-transform duration-200" 
+        <i class="fas fa-chevron-down text-gray-400 text-xs transition-transform duration-300 group-hover:text-gray-600" 
            :class="{'rotate-180': open}"></i>
     </button>
     
@@ -60,12 +73,21 @@
         </div>
         
         <!-- Menu Items -->
+        <div class="px-4 py-2">
             
-          <div class="px-4 py-2">
+            <!-- Back to Dashboard -->
+            <a href="@if(Auth::user()->role == 'admin'){{ route('admin.dashboard') }}@elseif(Auth::user()->role == 'operator'){{ route('operator.dashboard') }}@else{{ route('dashboard') }}@endif" 
+               class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition rounded-lg">
+                <i class="fas fa-home w-4 text-blue-500"></i>
+                <span>Kembali ke Dashboard</span>
+            </a>
+
+            <!-- Divider -->
+            <div class="my-2 border-t border-gray-100"></div>
 
             @if(isset($profileRoute))
                 <a href="{{ $profileRoute }}" 
-                   class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition">
+                   class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition rounded-lg">
                     <i class="fas fa-user-circle w-4 text-gray-400"></i>
                     {{ $profileLabel ?? 'Profile' }}
                 </a>
@@ -73,21 +95,23 @@
             
             @if(isset($settingsRoute))
                 <a href="{{ $settingsRoute }}" 
-                   class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition">
+                   class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition rounded-lg">
                     <i class="fas fa-cog w-4 text-gray-400"></i>
                     {{ $settingsLabel ?? 'Pengaturan' }}
                 </a>
             @endif
-              <div class="py-2">
+
+            <!-- Divider -->
+            <div class="my-2 border-t border-gray-100"></div>
+
+            <!-- Logout -->
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" 
-                        class="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition">
+                        class="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition rounded-lg">
                     <i class="fas fa-sign-out-alt w-4"></i>
                     Logout
                 </button>
-        </div>
-       
             </form>
         </div>
     </div>
