@@ -255,45 +255,7 @@
                     ])
                 </div>
 
-                <!-- Daerah Butuh Relawan Teratas -->
-                <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-6">
-                    <div class="flex items-center gap-2 mb-4">
-                        <i class="fas fa-exclamation-triangle text-red-500"></i>
-                        <h3 class="text-lg font-semibold text-gray-800">Prioritas Tinggi</h3>
-                    </div>
-                    <p class="text-sm text-gray-600 mb-4">Daerah yang paling membutuhkan relawan saat ini:</p>
-
-                    <div class="space-y-3">
-                        @forelse($daerahButuhRelawan->where('aktif', true)->sortByDesc('prioritas')->take(3) as $daerah)
-                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
-                                <div class="flex-1">
-                                    <div class="flex items-center gap-2">
-                                        <span class="font-medium text-gray-800 text-sm">{{ $daerah->nama_daerah }}</span>
-                                        <span class="px-2 py-0.5 {{ $daerah->prioritas_badge }} text-xs rounded-full font-medium">
-                                            {{ $daerah->prioritas_text }}
-                                        </span>
-                                    </div>
-                                    <div class="text-xs text-gray-500 mt-1">{{ $daerah->provinsi }}</div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-sm font-bold text-orange-600">{{ $daerah->relawan_tersedia }}</div>
-                                    <div class="text-xs text-gray-500">butuh</div>
-                                </div>
-                            </div>
-                        @empty
-                            <div class="text-center py-4">
-                                <i class="fas fa-check-circle text-green-500 text-2xl mb-2"></i>
-                                <p class="text-sm text-gray-600">Semua daerah sudah terpenuhi relawannya</p>
-                            </div>
-                        @endforelse
-                    </div>
-
-                    <div class="mt-4 pt-4 border-t border-gray-200">
-                        <a href="#daerah-relawan" class="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 text-sm font-medium transition">
-                            <i class="fas fa-arrow-down"></i>
-                            Lihat Semua Daerah
-                        </a>
-                    </div>
+             
                 </div>
             </div>
         </div>
@@ -422,7 +384,7 @@
         <p class="text-blue-100 mb-8 text-lg max-w-2xl mx-auto">
             Bergabunglah bersama ribuan warga yang sudah menggunakan LaporinAja
         </p>
-        <a href="{{ route('register') }}" class="inline-flex items-center gap-3 bg-white text-blue-700 px-8 py-4 rounded-full font-bold text-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+        <a href="{{ route('register') }}" class="inline-flex items-center gap-3 bg-white text-blue-700 px-8 py-4 rounded-full font-semibold text-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
             <i class="fas fa-pen-alt"></i>
             Buat Laporan Sekarang
             <i class="fas fa-arrow-right"></i>
