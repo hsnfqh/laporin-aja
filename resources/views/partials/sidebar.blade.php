@@ -168,18 +168,25 @@
 </style>
 
 <div class="sidebar-container" id="sidebarContainer"
-     onmouseenter="expandSidebar()"
-     onmouseleave="collapseSidebar()">
+     x-data="{ isPinned: false, isHovering: false }"
+     :class="{ 
+         'sidebar-collapsed': (!isPinned && !$el.classList.contains('mobile-open')) || (window.innerWidth <= 768 && !$el.classList.contains('mobile-open')), 
+         'sidebar-expanded': (isPinned || $el.classList.contains('mobile-open')) && window.innerWidth > 768 
+     }"
+     @mouseenter="if (!isPinned && window.innerWidth > 768) { $el.classList.remove('sidebar-collapsed'); $el.classList.add('sidebar-expanded'); isHovering = true; }"
+     @mouseleave="if (!isPinned && window.innerWidth > 768) { setTimeout(() => { if (!isHovering) { $el.classList.remove('sidebar-expanded'); $el.classList.add('sidebar-collapsed'); } }, 100); isHovering = false; }"
+     @sidebar-open.window="$el.classList.add('mobile-open')"
+     @sidebar-close.window="$el.classList.remove('mobile-open')">
     
-    <!-- Trigger area (area sensitif di pinggir kiri) -->
-    <div class="sidebar-trigger" id="sidebarTrigger"></div>
+    <!-- Trigger area (area sensitif di pinggir kiri) - hanya untuk desktop -->
+    <div class="sidebar-trigger" @mouseenter="if (!isPinned && window.innerWidth > 768) { $el.parentElement.classList.remove('sidebar-collapsed'); $el.parentElement.classList.add('sidebar-expanded'); isHovering = true; }"></div>
     
     <!-- Sidebar Content -->
     <div class="sidebar-content" id="sidebarContent">
         <div class="p-4">
             <!-- Tombol pin/lock -->
-            <div class="pin-btn" id="pinBtn" onclick="toggleSidebarPin()">
-                <i class="fas fa-thumbtack"></i>
+            <div class="pin-btn" @click="isPinned = !isPinned" :style="isPinned ? 'background-color: #3b82f6; border-color: #3b82f6;' : 'background-color: white; border-color: #e2e8f0;'">
+                <i class="fas fa-thumbtack" :style="isPinned ? 'color: white;' : 'color: #64748b;'" :class="isPinned ? 'fa-rotate-45' : ''"></i>
             </div>
             
             <!-- Logo -->
@@ -193,7 +200,7 @@
             
             <!-- Close button untuk mobile -->
             <div class="flex justify-end lg:hidden mb-4">
-                <button onclick="closeMobileSidebar()" class="text-gray-500 hover:text-gray-700 p-2">
+                <button @click="$dispatch('close-sidebar')" class="text-gray-500 hover:text-gray-700 p-2">
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
@@ -240,105 +247,26 @@
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMobileSidebar()"></div>
 
 <script>
-    let isPinned = false;
-    let hoverTimeout;
-    let isHovering = false;
-    
-    const sidebarContainer = document.getElementById('sidebarContainer');
-    const pinBtn = document.getElementById('pinBtn');
-    
-    // Fungsi untuk expand sidebar
-    function expandSidebar() {
-        if (!isPinned && window.innerWidth > 768) {
-            clearTimeout(hoverTimeout);
-            sidebarContainer.classList.remove('sidebar-collapsed');
-            sidebarContainer.classList.add('sidebar-expanded');
-            isHovering = true;
-        }
-    }
-    
-    // Fungsi untuk collapse sidebar
-    function collapseSidebar() {
-        if (!isPinned && window.innerWidth > 768) {
-            hoverTimeout = setTimeout(() => {
-                if (!isHovering) {
-                    sidebarContainer.classList.remove('sidebar-expanded');
-                    sidebarContainer.classList.add('sidebar-collapsed');
-                }
-            }, 100);
-        }
-        isHovering = false;
-    }
-    
-    // Fungsi untuk toggle pin (lock sidebar)
-    function toggleSidebarPin() {
-        isPinned = !isPinned;
-        const icon = pinBtn.querySelector('i');
-        
-        if (isPinned) {
-            // Locked - sidebar tetap expanded
-            sidebarContainer.classList.remove('sidebar-collapsed');
-            sidebarContainer.classList.add('sidebar-expanded');
-            pinBtn.style.backgroundColor = '#3b82f6';
-            pinBtn.style.borderColor = '#3b82f6';
-            icon.style.color = 'white';
-            icon.classList.add('fa-rotate-45');
-        } else {
-            // Unlocked - sidebar bisa auto hide
-            sidebarContainer.classList.remove('sidebar-expanded');
-            sidebarContainer.classList.add('sidebar-collapsed');
-            pinBtn.style.backgroundColor = 'white';
-            pinBtn.style.borderColor = '#e2e8f0';
-            icon.style.color = '#64748b';
-            icon.classList.remove('fa-rotate-45');
-        }
-    }
-    
-    // Inisialisasi sidebar dalam keadaan collapsed
+    // Inisialisasi sidebar dalam keadaan collapsed pada desktop
     document.addEventListener('DOMContentLoaded', function() {
         if (window.innerWidth > 768) {
-            sidebarContainer.classList.add('sidebar-collapsed');
+            document.getElementById('sidebarContainer').classList.add('sidebar-collapsed');
         }
-        
-        // Event listener untuk trigger area
-        const triggerArea = document.querySelector('.sidebar-trigger');
-        if (triggerArea) {
-            triggerArea.addEventListener('mouseenter', expandSidebar);
-        }
-        
-        // Mouse enter/leave untuk sidebar container
-        sidebarContainer.addEventListener('mouseenter', function() {
-            isHovering = true;
-            if (window.innerWidth > 768) expandSidebar();
-        });
-        
-        sidebarContainer.addEventListener('mouseleave', function() {
-            isHovering = false;
-            if (window.innerWidth > 768) collapseSidebar();
-        });
     });
-    
-    // Fungsi untuk mobile
-    function openMobileSidebar() {
-        sidebarContainer.classList.add('mobile-open');
-        document.getElementById('sidebarOverlay').classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-    
-    function closeMobileSidebar() {
-        sidebarContainer.classList.remove('mobile-open');
-        document.getElementById('sidebarOverlay').classList.remove('active');
-        document.body.style.overflow = '';
-    }
     
     // Handle window resize
     window.addEventListener('resize', function() {
         if (window.innerWidth > 768) {
-            closeMobileSidebar();
-            if (!isPinned) {
-                sidebarContainer.classList.add('sidebar-collapsed');
-                sidebarContainer.classList.remove('sidebar-expanded');
+            // Close mobile sidebar if open
+            const sidebar = document.getElementById('sidebarContainer');
+            if (sidebar) {
+                sidebar.classList.remove('mobile-open');
             }
+            const overlay = document.getElementById('sidebarOverlay');
+            if (overlay) {
+                overlay.classList.remove('active');
+            }
+            document.body.style.overflow = '';
         }
     });
 </script>

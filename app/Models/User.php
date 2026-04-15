@@ -25,6 +25,7 @@ class User extends Authenticatable
         'no_hp',
         'role',
         'status',
+        'settings',
     ];
 
     /**
@@ -47,6 +48,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'settings' => 'array',
         ];
     }
 

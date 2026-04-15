@@ -1,12 +1,12 @@
 @extends('layouts.dashboard.app')
 
 @section('content')
-<div class="flex min-h-screen bg-gray-100" x-data="{ sidebarOpen: false }">
+<div class="flex min-h-screen bg-gray-100" x-data="sidebarHandler" @close-sidebar.window="sidebarOpen = false">
     <!-- Include Sidebar Partial -->
     @include('partials.sidebar')
     
     <!-- Mobile overlay -->
-    <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false" class="fixed inset-0 bg-black/50 z-30 md:hidden"></div>
+    <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false" class="fixed inset-0 bg-black/50 z-30 md:hidden" id="sidebarOverlay"></div>
     
     <!-- Main Content -->
     <main class="flex-1 min-w-0 transition-all duration-300" 
@@ -17,11 +17,19 @@
           }">
         <div class="p-8">
             @auth
-                <div class="flex justify-end mb-6">
+                <div class="flex justify-between items-center mb-6">
+                    <!-- Hamburger Button untuk Mobile -->
+                    <button @click="sidebarOpen = true" class="md:hidden text-gray-500 hover:text-gray-700 p-2 bg-white rounded-lg shadow-sm border">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    
+                    <!-- Spacer untuk mobile -->
+                    <div class="md:hidden"></div>
+                    <div class="ml-auto"> </div>
                     @include('partials.auth-dropdown', [
                         'profileRoute' => route('profile.edit'),
                         'profileLabel' => 'Profile',
-                        'settingsRoute' => '#',
+                        'settingsRoute' => route('settings.index'),
                         'settingsLabel' => 'Pengaturan',
                         'metaText' => 'Pengguna'
                     ])
@@ -109,6 +117,36 @@
                 mainContent.classList.add('sidebar-expanded');
             }
         }
+    });
+</script>
+
+<script>
+    // Handle mobile sidebar dengan Alpine.js
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('sidebarHandler', () => ({
+            sidebarOpen: false,
+            
+            init() {
+                this.$watch('sidebarOpen', (value) => {
+                    const sidebar = document.getElementById('sidebarContainer');
+                    const overlay = document.getElementById('sidebarOverlay');
+                    
+                    if (sidebar && overlay) {
+                        if (value) {
+                            sidebar.classList.add('mobile-open');
+                            overlay.classList.add('active');
+                            document.body.style.overflow = 'hidden';
+                            this.$dispatch('sidebar-open');
+                        } else {
+                            sidebar.classList.remove('mobile-open');
+                            overlay.classList.remove('active');
+                            document.body.style.overflow = '';
+                            this.$dispatch('sidebar-close');
+                        }
+                    }
+                });
+            }
+        }));
     });
 </script>
 @endsection

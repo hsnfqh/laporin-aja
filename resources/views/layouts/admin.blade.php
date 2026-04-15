@@ -127,7 +127,7 @@
                         @include('partials.auth-dropdown', [
                             'profileRoute' => route('profile.edit'),
                             'profileLabel' => 'Profile Saya',
-                            'settingsRoute' => '#',
+                            'settingsRoute' => route('settings.index'),
                             'settingsLabel' => 'Pengaturan',
                             'metaText' => 'Administrator'
                         ])

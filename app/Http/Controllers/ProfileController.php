@@ -16,8 +16,18 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $user = $request->user();
+        $layout = 'layouts.dashboard.index'; // default untuk warga
+
+        if ($user->role === 'admin') {
+            $layout = 'layouts.admin';
+        } elseif ($user->role === 'operator') {
+            $layout = 'layouts.operator';
+        }
+
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
+            'layout' => $layout,
         ]);
     }
 
